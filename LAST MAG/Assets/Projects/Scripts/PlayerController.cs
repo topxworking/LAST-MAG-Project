@@ -5,7 +5,7 @@ public class PlayerController : MonoBehaviour
 {
     [Header("Movement")]
     public float moveSpeed = 5f;
-    public float gravity = -9.81f;
+    public float gravity = -20f;
     public float jumpHeight = 1.5f;
 
     [Header("Look")]
