@@ -95,4 +95,10 @@ public class PlayerController : MonoBehaviour
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
         }
     }
+
+    public void AddRecoil(float recoilUp, float recoilSide)
+    {
+        xRotation -= recoilUp;
+        transform.Rotate(Vector3.up * recoilSide);
+    }
 }
