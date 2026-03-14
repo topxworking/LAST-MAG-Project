@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
+using TMPro;
 
 public class GunController : MonoBehaviour
 {
@@ -29,6 +30,7 @@ public class GunController : MonoBehaviour
     [Header("References")]
     public Camera playerCamera;
     public PlayerController pc;
+    public TextMeshProUGUI ammoText;
 
     [Header("Inputs")]
     public InputActionReference fireAction;
@@ -78,6 +80,8 @@ public class GunController : MonoBehaviour
         {
             StartCoroutine(Reload());
         }
+
+        ammoText.text = currentAmmo + "/" + maxAmmo;
     }
 
     void HanddleShooting(bool isAiming, bool isShooting)
@@ -99,7 +103,6 @@ public class GunController : MonoBehaviour
     void Shoot()
     {
         currentAmmo--;
-        Debug.Log("Ammo:" + currentAmmo + "/" + maxAmmo);
 
         float xOffset = Random.Range(-currentSpread, currentSpread);
         float yOffset = Random.Range(-currentSpread, currentSpread);
@@ -134,12 +137,10 @@ public class GunController : MonoBehaviour
     IEnumerator Reload()
     {
         isReloading = true;
-        Debug.Log("Reloading...");
 
         yield return new WaitForSeconds(reloadTime);
 
         currentAmmo = maxAmmo;
         isReloading = false;
-        Debug.Log("Reload: " + currentAmmo);
     }
 }
