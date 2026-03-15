@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
 using TMPro;
@@ -110,7 +110,13 @@ public class GunController : MonoBehaviour
 
         if (Physics.Raycast(playerCamera.transform.position, shootDirection, out RaycastHit hit, range))
         {
-            Debug.Log("Hit: " + hit.transform.name);
+            Debug.Log("ยิงโดน: " + hit.transform.name);
+
+            EnemyController enemy = hit.transform.GetComponent<EnemyController>();
+            if (enemy != null)
+            {
+                enemy.TakeDamage(damage);
+            }
         }
 
         float randomSideRecoil = Random.Range(-recoilSide, recoilSide);
