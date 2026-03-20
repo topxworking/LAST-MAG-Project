@@ -42,6 +42,7 @@ public class PlayerController : MonoBehaviour
     {
         _cc = GetComponent<CharacterController>();
         _shooter = GetComponent<PlayerShooter>();
+        _stats = GetComponent<PlayerHealth>().Stats;
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -56,6 +57,7 @@ public class PlayerController : MonoBehaviour
         _input.OnShootCanceled += HandleShootStop;
         _input.OnAimStarted += HandleAimStart;
         _input.OnAimCanceled += HandleAimStop;
+        _input.OnReloadStarted += HandleReload;
 
         EventManager.OnUpgradeMenuOpened += DisableInput;
         EventManager.OnUpgradeMenuClosed += EnableInput;
@@ -71,17 +73,11 @@ public class PlayerController : MonoBehaviour
         _input.OnShootCanceled -= HandleShootStop;
         _input.OnAimStarted -= HandleAimStart;
         _input.OnAimCanceled -= HandleAimStop;
+        _input.OnReloadStarted -= HandleReload;
 
         EventManager.OnUpgradeMenuOpened -= DisableInput;
         EventManager.OnUpgradeMenuClosed -= EnableInput;
         EventManager.OnPlayerDied -= DisableInput;
-    }
-
-    private void Start()
-    {
-        var health = GetComponent<PlayerHealth>();
-        if (health != null)
-            _stats = health.Stats;
     }
 
     private void Update()
@@ -153,6 +149,8 @@ public class PlayerController : MonoBehaviour
         _isAiming = true;
         _shooter?.SetAiming(true);
     }
+
+    private void HandleReload() => _shooter?.RequestReload();
 
     private void HandleAimStop()
     {

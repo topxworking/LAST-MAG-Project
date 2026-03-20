@@ -9,11 +9,12 @@ public class InputReader : ScriptableObject, GameInputActions.IPlayerActions
 
     public event Action<Vector2> OnMove;
     public event Action<Vector2> OnLook;
-    public event Action          OnJumpStarted;
-    public event Action          OnShootStarted;
-    public event Action          OnShootCanceled;
-    public event Action          OnAimStarted;
-    public event Action          OnAimCanceled;
+    public event Action OnJumpStarted;
+    public event Action OnShootStarted;
+    public event Action OnShootCanceled;
+    public event Action OnAimStarted;
+    public event Action OnAimCanceled;
+    public event Action OnReloadStarted;
 
     private void OnEnable()
     {
@@ -57,6 +58,11 @@ public class InputReader : ScriptableObject, GameInputActions.IPlayerActions
     {
         if (ctx.started)  OnAimStarted?.Invoke();
         if (ctx.canceled) OnAimCanceled?.Invoke();
+    }
+
+    public void OnReload(InputAction.CallbackContext ctx)
+    {
+        if (ctx.started) OnReloadStarted?.Invoke();
     }
 
     public void EnablePlayerInput()  => _actions?.Player.Enable();

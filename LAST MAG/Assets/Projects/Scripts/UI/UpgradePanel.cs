@@ -14,14 +14,14 @@ public class UpgradePanel : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _speedLabel;
     [SerializeField] private TextMeshProUGUI _damageLabel;
     [SerializeField] private TextMeshProUGUI _fireRateLabel;
-    [SerializeField] private TextMeshProUGUI _jumpLabel;
+    [SerializeField] private TextMeshProUGUI _reloadSpeedLabel;
 
     [Header("Upgrade Buttons")]
     [SerializeField] private Button _upgradeHealthBtn;
     [SerializeField] private Button _upgradeSpeedBtn;
     [SerializeField] private Button _upgradeDamageBtn;
     [SerializeField] private Button _upgradeFireRateBtn;
-    [SerializeField] private Button _upgradeJumpBtn;
+    [SerializeField] private Button _upgradeReloadSpeedBtn;
     [SerializeField] private Button _continueBtn;
 
     private PlayerHealth _playerHealth;
@@ -36,7 +36,7 @@ public class UpgradePanel : MonoBehaviour
         _upgradeSpeedBtn.onClick.AddListener(UpgradeSpeed);
         _upgradeDamageBtn.onClick.AddListener(UpgradeDamage);
         _upgradeFireRateBtn.onClick.AddListener(UpgradeFireRate);
-        _upgradeJumpBtn.onClick.AddListener(UpgradeJump);
+        _upgradeReloadSpeedBtn.onClick.AddListener(UpgradeJump);
         _continueBtn.onClick.AddListener(Close);
     }
 
@@ -76,29 +76,34 @@ public class UpgradePanel : MonoBehaviour
         EventManager.RaiseUpgradeMenuClosed();
     }
 
-    private void UpgradeHealth()   { _stats.UpgradeHealth();   RefreshUI(); }
-    private void UpgradeSpeed()    { _stats.UpgradeSpeed();    RefreshUI(); }
-    private void UpgradeDamage()   { _stats.UpgradeDamage();   RefreshUI(); }
+    private void UpgradeHealth()
+    {
+        _stats.UpgradeHealth();
+        EventManager.RaisePlayerHealthChanged(_stats.CurrentHealth, _stats.MaxHealth);
+        RefreshUI();
+    }
+    private void UpgradeSpeed()    { _stats.UpgradeSpeed(); RefreshUI(); }
+    private void UpgradeDamage()   { _stats.UpgradeDamage(); RefreshUI(); }
     private void UpgradeFireRate() { _stats.UpgradeFireRate(); RefreshUI(); }
-    private void UpgradeJump()     { _stats.UpgradeJump();     RefreshUI(); }
+    private void UpgradeJump()     { _stats.UpgradeReloadSpeed(); RefreshUI(); }
 
     private void RefreshUI()
     {
         int wave = GameManager.instance != null ? GameManager.instance.CurrentWave : 0;
         _waveText.text    = $"Wave {wave} Complete!";
-        _pointsText.text  = $"Upgrade Points: {_stats.UpgradePoints}";
+        _pointsText.text  = $"{_stats.UpgradePoints}";
 
-        //_healthLabel.text   = $"HP: {_stats.MaxHealth:F0}";
-        //_speedLabel.text    = $"Speed: {_stats.MoveSpeed:F1}";
-        //_damageLabel.text   = $"Damage: {_stats.Damage:F0}";
-        //_fireRateLabel.text = $"Fire Rate: {(1f / _stats.FireRate):F1}/s";
-        //_jumpLabel.text     = $"Jump: {_stats.JumpForce:F1}";
+        _healthLabel.text = $"HP: {_stats.MaxHealth:F0}";
+        _speedLabel.text = $"Speed: {_stats.MoveSpeed:F1}";
+        _damageLabel.text = $"Damage: {_stats.Damage:F0}";
+        _fireRateLabel.text = $"Fire Rate: {(1f / _stats.FireRate):F1}/s";
+        _reloadSpeedLabel.text = $"Reload: {_stats.ReloadTime:F1}s";
 
         bool hasPoints = _stats.UpgradePoints > 0;
-        _upgradeHealthBtn.interactable   = hasPoints;
-        _upgradeSpeedBtn.interactable    = hasPoints;
-        _upgradeDamageBtn.interactable   = hasPoints;
+        _upgradeHealthBtn.interactable = hasPoints;
+        _upgradeSpeedBtn.interactable = hasPoints;
+        _upgradeDamageBtn.interactable = hasPoints;
         _upgradeFireRateBtn.interactable = hasPoints;
-        _upgradeJumpBtn.interactable     = hasPoints;
+        _upgradeReloadSpeedBtn.interactable = hasPoints;
     }
 }

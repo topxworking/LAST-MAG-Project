@@ -11,13 +11,19 @@ public class PlayerStats
     public float FireRate = 0.2f;
     public float BulletSpeed = 30f;
     public float BulletRange = 50f;
+
+    public int MagazineSize = 30;
+    public float ReloadTime = 2.0f;
+
     public int UpgradePoints = 0;
 
     [NonSerialized] public float CurrentHealth;
+    [NonSerialized] public int CurrentAmmo;
 
     public void Initialize()
     {
         CurrentHealth = MaxHealth;
+        CurrentAmmo = MagazineSize;
     }
 
     public bool UpgradeHealth()
@@ -57,21 +63,11 @@ public class PlayerStats
         return true;
     }
 
-    public bool UpgradeBulletSpeed()
+    public bool UpgradeReloadSpeed()
     {
         if (UpgradePoints < 1) return false;
-        BulletSpeed += 5f;
+        ReloadTime = Mathf.Max(0.3f, ReloadTime - 0.2f);
         UpgradePoints--;
-        Debug.Log($"[Upgrade] ReloadTime → {BulletSpeed:F1}s (Points left: {UpgradePoints})");
-        return true;
-    }
-
-    public bool UpgradeJump()
-    {
-        if (UpgradePoints < 1) return false;
-        JumpForce += 1f;
-        UpgradePoints--;
-        Debug.Log($"[Upgrade] ReloadTime → {JumpForce:F1}s (Points left: {UpgradePoints})");
         return true;
     }
 }

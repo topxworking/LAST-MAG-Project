@@ -12,7 +12,8 @@ public class BossEnemy : EnemyBase
 
     private bool _phase2Active;
     private float _slamTimer;
-    private float _maxHealth;
+    private float _maxHp;
+    private float _accumulatedDamage;
 
     public override void PerformAttack()
     {
@@ -40,17 +41,22 @@ public class BossEnemy : EnemyBase
 
     protected override void OnHit(float amount)
     {
-        if (!_phase2Active && _maxHealth > 0f)
+        _accumulatedDamage += amount;
+        float remaining = Mathf.Max(0f, _maxHp - _accumulatedDamage);
+        EventManager.RaiseBossHealthChanged(remaining, _maxHp);
+
+        if (_phase2Active) return;
+        if (_accumulatedDamage >= _maxHp * 0.5f)
         {
             _phase2Active = true;
-            Debug.Log("[Boss] Phase 2 activated!");
             Agent.speed = Stats.MoveSpeed * 1.5f;
+            Debug.Log("[Boss] Phase 2 activated!");
         }
     }
 
     public new void Initialize(EnemyStats stats, Transform player)
     {
-        _maxHealth = stats.MaxHealth;
+        _maxHp = stats.MaxHealth;
         base.Initialize(stats, player);
     }
 

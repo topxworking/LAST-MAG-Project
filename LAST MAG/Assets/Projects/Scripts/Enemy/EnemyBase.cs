@@ -179,6 +179,11 @@ public abstract class EnemyBase : MonoBehaviour
         Debug.Log($"[Combat] {gameObject.name} took {amount} dmg > HP: {_currentHealth:F0}/{Stats.MaxHealth:F0}");
         OnHit(amount);
 
+        if (!_isDead)
+        {
+            TransitionTo(ChaseState);
+        }
+
         if (_currentHealth <= 0f)
         {
             _isDead = true;
