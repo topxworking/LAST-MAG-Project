@@ -1,0 +1,108 @@
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+public enum GameState { Playing, Upgrading, BossFight, GameOver }
+
+public class GameManager : MonoBehaviour
+{
+    public static GameManager instance { get; private set; }
+
+    public GameState CurrentState { get; private set; } = GameState.Playing;
+
+    public int  Score       { get; private set; }
+    public int  CurrentWave { get; private set; }
+    public bool IsBossWave  => CurrentWave % 10 == 0 && CurrentWave > 0;
+
+    [Header("References")]
+    [SerializeField] private WaveManager   _waveManager;
+    [SerializeField] private UIManager     _uiManager;
+    [SerializeField] private UpgradePanel  _upgradePanel;
+
+    private void Awake()
+    {
+        if (instance != null && instance != this) { Destroy(gameObject); return; }
+        instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
+
+    private void OnEnable()
+    {
+        EventManager.OnEnemyKilled    += AddScore;
+        EventManager.OnWaveCompleted  += HandleWaveCompleted;
+        EventManager.OnBossDefeated   += HandleBossDefeated;
+        EventManager.OnPlayerDied     += HandlePlayerDied;
+        EventManager.OnUpgradeMenuClosed += ResumeAfterUpgrade;
+    }
+
+    private void OnDisable()
+    {
+        EventManager.OnEnemyKilled    -= AddScore;
+        EventManager.OnWaveCompleted  -= HandleWaveCompleted;
+        EventManager.OnBossDefeated   -= HandleBossDefeated;
+        EventManager.OnPlayerDied     -= HandlePlayerDied;
+        EventManager.OnUpgradeMenuClosed -= ResumeAfterUpgrade;
+    }
+
+    private void Start()
+    {
+        CurrentWave = 0;
+        Score       = 0;
+        StartNextWave();
+    }
+
+    private void StartNextWave()
+    {
+        CurrentWave++;
+        if (IsBossWave)
+        {
+            CurrentState = GameState.BossFight;
+            EventManager.RaiseBossWaveStarted(CurrentWave);
+        }
+        else
+        {
+            CurrentState = GameState.Playing;
+        }
+        _waveManager.StartWave(CurrentWave);
+        EventManager.RaiseWaveStarted(CurrentWave);
+    }
+
+    private void HandleWaveCompleted(int wave)
+    {
+        CurrentState = GameState.Upgrading;
+        Time.timeScale = 0f;
+        _upgradePanel.Show();
+        EventManager.RaiseUpgradeMenuOpened();
+    }
+
+    private void HandleBossDefeated()
+    {
+        AddScore(500);
+        HandleWaveCompleted(CurrentWave);
+    }
+
+    private void ResumeAfterUpgrade()
+    {
+        Time.timeScale = 1f;
+        StartNextWave();
+    }
+
+    private void HandlePlayerDied()
+    {
+        CurrentState = GameState.GameOver;
+        Time.timeScale = 0f;
+        _uiManager.ShowGameOver(Score, CurrentWave);
+    }
+
+    private void AddScore(int value)
+    {
+        Score += value;
+        EventManager.RaiseScoreChanged(Score);
+    }
+
+    public void RestartGame()
+    {
+        Time.timeScale = 1f;
+        EventManager.ClearAllEvents();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+}
