@@ -31,30 +31,23 @@ public class Bullet : MonoBehaviour, IPoolable
 
     private void OnTriggerEnter(Collider other)
     {
+        if (other.isTrigger) return;
+        if (_isEnemyBullet && other.CompareTag("Enemy")) return;
+        if (!_isEnemyBullet && other.CompareTag("Player")) return;
+
         if (_isEnemyBullet)
         {
             if (other.TryGetComponent<PlayerHealth>(out var ph))
-            {
                 ph.TakeDamage(_damage);
-                SpawnVFX();
-                ReturnToPool();
-            }
         }
         else
         {
             if (other.TryGetComponent<EnemyBase>(out var enemy))
-            {
                 enemy.TakeDamage(_damage);
-                SpawnVFX();
-                ReturnToPool();
-            }
         }
 
-        if (!other.isTrigger && !other.CompareTag("Player") && !other.CompareTag("Enemy"))
-        {
-            SpawnVFX();
-            ReturnToPool();
-        }
+        SpawnVFX();
+        ReturnToPool();
     }
 
     public void Initialize(float damage, float speed, float range, bool isEnemy)
@@ -78,7 +71,14 @@ public class Bullet : MonoBehaviour, IPoolable
 
     private void SpawnVFX()
     {
-        if (_hitVFX != null)
-            Instantiate(_hitVFX, transform.position, Quaternion.identity);
+        if (_hitVFX == null) return;
+
+        GameObject fx = Instantiate(
+            _hitVFX,
+            transform.position,
+            Quaternion.LookRotation(-transform.forward)
+        );
+
+        Destroy(fx, 2f);
     }
 }

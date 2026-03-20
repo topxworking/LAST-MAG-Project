@@ -24,6 +24,9 @@ public static class EventManager
 
     public static event Action<int> OnScoreChanged;
 
+    public static event Action<int> OnCountdownTick;
+    public static event Action OnCountdownFinished;
+
     public static event Action<float, float> OnBossHealthChanged;
     public static void RaiseBossHealthChanged(float cur, float max)
         => OnBossHealthChanged?.Invoke(cur, max);
@@ -42,6 +45,8 @@ public static class EventManager
     public static void RaiseUpgradeMenuOpened() => OnUpgradeMenuOpened?.Invoke();
     public static void RaiseUpgradeMenuClosed() => OnUpgradeMenuClosed?.Invoke();
     public static void RaiseScoreChanged(int score) => OnScoreChanged?.Invoke(score);
+    public static void RaiseCountdownTick(int sec) => OnCountdownTick?.Invoke(sec);
+    public static void RaiseCountdownFinished() => OnCountdownFinished?.Invoke();
 
     public static void ClearAllEvents()
     {

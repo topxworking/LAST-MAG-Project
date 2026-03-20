@@ -40,8 +40,19 @@ public class WaveManager : MonoBehaviour
         _activeEnemies.Clear();
 
         EventManager.RaiseWaveStarted(_currentWave);
+        StartCoroutine(CountdownThenSpawn());
+    }
 
-        bool isBoss = waveNumber % 10 == 0 && waveNumber > 0;
+    private IEnumerator CountdownThenSpawn()
+    {
+        for (int i = 5; i >= 1; i--)
+        {
+            EventManager.RaiseCountdownTick(i);
+            yield return new WaitForSeconds(1f);
+        }
+        EventManager.RaiseCountdownFinished();
+
+        bool isBoss = _currentWave % 10 == 0 && _currentWave > 0;
         if (isBoss)
             StartCoroutine(SpawnBossWave());
         else

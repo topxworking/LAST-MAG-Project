@@ -17,6 +17,7 @@ public class PlayerShooter : MonoBehaviour
 
     private bool _isShooting;
     private bool _isReloading;
+    private bool _countdownLock = true;
     private float _nextFireTime;
 
     private void Awake()
@@ -30,11 +31,16 @@ public class PlayerShooter : MonoBehaviour
         EventManager.RaiseAmmoChanged(_stats.CurrentAmmo, _stats.MagazineSize);
     }
 
+    private void OnCountdownTick(int sec) => _countdownLock = true;
+    private void OnCountdownDone() => _countdownLock = false;
+
     private void OnEnable()
     {
         EventManager.OnUpgradeMenuOpened += HandleMenuOpen;
         EventManager.OnUpgradeMenuClosed += HandleMenuClose;
         EventManager.OnPlayerDied += HandleDied;
+        EventManager.OnCountdownTick += OnCountdownTick;
+        EventManager.OnCountdownFinished += OnCountdownDone;
     }
 
     private void OnDisable()
@@ -42,11 +48,13 @@ public class PlayerShooter : MonoBehaviour
         EventManager.OnUpgradeMenuOpened -= HandleMenuOpen;
         EventManager.OnUpgradeMenuClosed -= HandleMenuClose;
         EventManager.OnPlayerDied -= HandleDied;
+        EventManager.OnCountdownTick -= OnCountdownTick;
+        EventManager.OnCountdownFinished -= OnCountdownDone;
     }
 
     private void Update()
     {
-        if (_isReloading) return;
+        if (_isReloading || _countdownLock) return;
         if (_isShooting && Time.time >= _nextFireTime)
             TryFire();
     }

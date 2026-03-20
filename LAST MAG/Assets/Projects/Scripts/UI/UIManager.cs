@@ -38,6 +38,10 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Image _crosshairDot;
     [SerializeField] private Image _crosshairAimRing;
 
+    [Header("Countdown")]
+    [SerializeField] private GameObject _countdownRoot;
+    [SerializeField] private TextMeshProUGUI _countdownText;
+
     private void Awake()
     {
         _gameOverPanel.SetActive(false);
@@ -59,6 +63,8 @@ public class UIManager : MonoBehaviour
         EventManager.OnBossDefeated += HideBossBar;
         EventManager.OnEnemyCountChanged += UpdateEnemyCount;
         EventManager.OnScoreChanged += UpdateScore;
+        EventManager.OnCountdownTick += ShowCountdown;
+        EventManager.OnCountdownFinished += HideCountdown;
     }
 
     private void OnDisable()
@@ -72,6 +78,8 @@ public class UIManager : MonoBehaviour
         EventManager.OnBossDefeated -= HideBossBar;
         EventManager.OnEnemyCountChanged -= UpdateEnemyCount;
         EventManager.OnScoreChanged -= UpdateScore;
+        EventManager.OnCountdownTick -= ShowCountdown;
+        EventManager.OnCountdownFinished -= HideCountdown;
     }
 
     private void UpdateHealthBar(float current, float max)
@@ -169,5 +177,16 @@ public class UIManager : MonoBehaviour
     {
         if (_bossHealthBar != null)
             _bossHealthBar.value = current / max;
+    }
+
+    private void ShowCountdown(int sec)
+    {
+        if (_countdownRoot) _countdownRoot.SetActive(true);
+        if (_countdownText) _countdownText.text = sec.ToString();
+    }
+
+    private void HideCountdown()
+    {
+        if (_countdownRoot) _countdownRoot.SetActive(false);
     }
 }
