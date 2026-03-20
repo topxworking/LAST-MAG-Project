@@ -12,14 +12,14 @@ public struct EnemyPrefabEntry
 
 public class EnemyFactory : MonoBehaviour
 {
-    public static EnemyFactory Instance { get; private set; }
+    public static EnemyFactory instance { get; private set; }
 
     [SerializeField] private EnemyPrefabEntry[] _entries;
 
     private void Awake()
     {
-        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
-        Instance = this;
+        if (instance != null && instance != this) { Destroy(gameObject); return; }
+        instance = this;
     }
 
     public EnemyBase Create(EnemyType type, Vector3 position, int currentWave, Transform player)
@@ -41,7 +41,6 @@ public class EnemyFactory : MonoBehaviour
         foreach (var e in _entries)
             if (e.Type == type) return e;
 
-        Debug.LogWarning($"[EnemyFactory] No entry for {type}, falling back to first.");
         return _entries[0];
     }
 }

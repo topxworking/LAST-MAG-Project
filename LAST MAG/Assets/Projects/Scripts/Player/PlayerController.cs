@@ -41,7 +41,6 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         _cc = GetComponent<CharacterController>();
-        _stats = GetComponent<PlayerHealth>().Stats;
         _shooter = GetComponent<PlayerShooter>();
 
         Cursor.lockState = CursorLockMode.Locked;
@@ -76,6 +75,13 @@ public class PlayerController : MonoBehaviour
         EventManager.OnUpgradeMenuOpened -= DisableInput;
         EventManager.OnUpgradeMenuClosed -= EnableInput;
         EventManager.OnPlayerDied -= DisableInput;
+    }
+
+    private void Start()
+    {
+        var health = GetComponent<PlayerHealth>();
+        if (health != null)
+            _stats = health.Stats;
     }
 
     private void Update()

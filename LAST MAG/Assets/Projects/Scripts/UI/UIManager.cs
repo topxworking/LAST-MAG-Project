@@ -57,24 +57,31 @@ public class UIManager : MonoBehaviour
         EventManager.OnBossDefeated         -= HideBossBar;
         EventManager.OnEnemyCountChanged    -= UpdateEnemyCount;
         EventManager.OnScoreChanged         -= UpdateScore;
+        EventManager.OnUpgradeMenuOpened -= () => _crosshairDot?.gameObject.SetActive(false);
+        EventManager.OnUpgradeMenuClosed -= () => _crosshairDot?.gameObject.SetActive(true);
     }
 
     private void UpdateHealthBar(float current, float max)
     {
-        _healthBar.value = current / max;
+        float fillAmount = current / max;
+        _healthBar.value = fillAmount;
         _healthText.text = $"{Mathf.CeilToInt(current)} / {Mathf.CeilToInt(max)}";
+
+        Debug.Log($"Health Updated: {current}/{max} (Fill: {fillAmount})");
     }
 
     private void UpdateWaveDisplay(int wave)
     {
-        _waveText.text = $"Wave {wave}";
+        if (_waveText != null)
+            _waveText.text = $"Wave {wave}";
+
         StartCoroutine(ShowWaveAnnouncement(wave));
     }
 
     private IEnumerator ShowWaveAnnouncement(int wave)
     {
         bool isBoss = wave % 10 == 0 && wave > 0;
-        _waveAnnouncementText.text  = isBoss ? $"⚠  BOSS WAVE {wave}  ⚠" : $"— Wave {wave} —";
+        _waveAnnouncementText.text  = isBoss ? $"BOSS WAVE {wave} " : $"— Wave {wave} —";
         _waveAnnouncementText.color = isBoss ? Color.red : Color.white;
 
         yield return new WaitForSecondsRealtime(2.5f);

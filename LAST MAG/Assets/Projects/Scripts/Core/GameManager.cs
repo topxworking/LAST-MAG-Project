@@ -22,7 +22,6 @@ public class GameManager : MonoBehaviour
     {
         if (instance != null && instance != this) { Destroy(gameObject); return; }
         instance = this;
-        DontDestroyOnLoad(gameObject);
     }
 
     private void OnEnable()
@@ -36,23 +35,27 @@ public class GameManager : MonoBehaviour
 
     private void OnDisable()
     {
-        EventManager.OnEnemyKilled    -= AddScore;
-        EventManager.OnWaveCompleted  -= HandleWaveCompleted;
-        EventManager.OnBossDefeated   -= HandleBossDefeated;
-        EventManager.OnPlayerDied     -= HandlePlayerDied;
+        EventManager.OnEnemyKilled -= AddScore;
+        EventManager.OnWaveCompleted -= HandleWaveCompleted;
+        EventManager.OnBossDefeated -= HandleBossDefeated;
+        EventManager.OnPlayerDied -= HandlePlayerDied;
         EventManager.OnUpgradeMenuClosed -= ResumeAfterUpgrade;
     }
 
     private void Start()
     {
+        if (_waveManager == null)
+            _waveManager = FindFirstObjectByType<WaveManager>();
+
         CurrentWave = 0;
-        Score       = 0;
+        Score = 0;
         StartNextWave();
     }
 
     private void StartNextWave()
     {
         CurrentWave++;
+        Debug.Log("[GameManager] StartNextWave: " + CurrentWave);
         if (IsBossWave)
         {
             CurrentState = GameState.BossFight;
@@ -70,18 +73,27 @@ public class GameManager : MonoBehaviour
     {
         CurrentState = GameState.Upgrading;
         Time.timeScale = 0f;
-        _upgradePanel.Show();
-        EventManager.RaiseUpgradeMenuOpened();
+
+        if (_upgradePanel != null)
+        {
+            _upgradePanel.Show();
+            EventManager.RaiseUpgradeMenuOpened();
+        }
+        else
+        {
+            Time.timeScale = 1f;
+            StartNextWave();
+        }
     }
 
     private void HandleBossDefeated()
     {
-        AddScore(500);
-        HandleWaveCompleted(CurrentWave);
+        AddScore(500);       
     }
 
     private void ResumeAfterUpgrade()
     {
+        Debug.Log("[GameManager] ResumeAfterUpgrade called, starting wave: " + (CurrentWave + 1));
         Time.timeScale = 1f;
         StartNextWave();
     }

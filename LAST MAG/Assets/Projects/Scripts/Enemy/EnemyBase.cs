@@ -10,13 +10,55 @@ public interface IEnemyState
 
 public class IdleState : IEnemyState
 {
-    public void Enter(EnemyBase e) { e.Agent.isStopped = true; }
+    private float _wanderTimer;
+    private float _wanderInterval = 3f;
+
+    public void Enter(EnemyBase e)
+    {
+        if (e.Agent.isOnNavMesh)
+        {
+            e.Agent.isStopped = false;
+            e.Agent.speed = e.Stats.MoveSpeed * 0.4f;
+        }
+        _wanderTimer = 0f;
+        SetRandomDestination(e);
+    }
+
     public void Tick(EnemyBase e)
     {
         if (e.DistanceToPlayer <= e.Stats.DetectRange)
+        {
             e.TransitionTo(e.ChaseState);
+            return;
+        }
+
+        _wanderTimer += Time.deltaTime;
+        if (_wanderTimer >= _wanderInterval ||
+            !e.Agent.pathPending && e.Agent.remainingDistance < 0.5f)
+        {
+            _wanderTimer = 0f;
+            SetRandomDestination(e);
+        }
     }
-    public void Exit(EnemyBase e) { e.Agent.isStopped = false; }
+
+    public void Exit(EnemyBase e)
+    {
+        if (e.Agent.isOnNavMesh)
+            e.Agent.speed = e.Stats.MoveSpeed;
+    }
+
+    private void SetRandomDestination(EnemyBase e)
+    {
+        Vector3 randomDir = Random.insideUnitSphere * 10f;
+        randomDir += e.transform.position;
+        randomDir.y = e.transform.position.y;
+
+        if (NavMesh.SamplePosition(randomDir, out NavMeshHit hit, 10f, NavMesh.AllAreas))
+        {
+            if (e.Agent.isOnNavMesh)
+                e.Agent.SetDestination(hit.position);
+        }
+    }
 }
 
 public class ChaseState : IEnemyState
@@ -117,7 +159,7 @@ public abstract class EnemyBase : MonoBehaviour
 
     protected virtual void Update()
     {
-        if (_isDead) return;
+        if (_isDead || PlayerTransform == null || Stats == null) return;
 
         DistanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
         _currentState?.Tick(this);
@@ -134,6 +176,7 @@ public abstract class EnemyBase : MonoBehaviour
     {
         if (_isDead) return;
         _currentHealth -= amount;
+        Debug.Log($"[Combat] {gameObject.name} took {amount} dmg > HP: {_currentHealth:F0}/{Stats.MaxHealth:F0}");
         OnHit(amount);
 
         if (_currentHealth <= 0f)
@@ -153,7 +196,9 @@ public abstract class EnemyBase : MonoBehaviour
 
     public virtual void OnDeath()
     {
-        EventManager.RaiseEnemyKilled(Stats.ScoreValue);
+        if (Stats != null)
+            EventManager.RaiseEnemyKilled(Stats.ScoreValue);
+
         WaveManager.instance?.RegisterEnemyKilled();
 
         Destroy(gameObject, 1.5f);

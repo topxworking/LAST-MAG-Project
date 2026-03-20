@@ -5,11 +5,11 @@ using TMPro;
 public class UpgradePanel : MonoBehaviour
 {
     [Header("UI Elements")]
-    [SerializeField] private GameObject   _panel;
+    [SerializeField] private GameObject _panel;
     [SerializeField] private TextMeshProUGUI _pointsText;
     [SerializeField] private TextMeshProUGUI _waveText;
 
-    [Header("Stat Labels (after upgrade)")]
+    [Header("Stat Labels")]
     [SerializeField] private TextMeshProUGUI _healthLabel;
     [SerializeField] private TextMeshProUGUI _speedLabel;
     [SerializeField] private TextMeshProUGUI _damageLabel;
@@ -25,8 +25,8 @@ public class UpgradePanel : MonoBehaviour
     [SerializeField] private Button _continueBtn;
 
     private PlayerHealth _playerHealth;
-    private PlayerStats  _stats;
-    private int          _pointsEarnedThisWave = 2;
+    private PlayerStats _stats;
+    private int _pointsEarnedThisWave = 2;
 
     private void Awake()
     {
@@ -48,13 +48,24 @@ public class UpgradePanel : MonoBehaviour
 
     public void Show()
     {
-        _stats.UpgradePoints += _pointsEarnedThisWave;
+        if (_stats == null)
+        {
+            var ph = FindFirstObjectByType<PlayerHealth>();
+            if (ph != null) _stats = ph.Stats;
+        }
 
+        if (_stats == null)
+        {
+            Debug.LogError("[UpgradePanel] PlayerHealth not found!");
+            return;
+        }
+
+        _stats.UpgradePoints += _pointsEarnedThisWave;
         _panel.SetActive(true);
         RefreshUI();
 
         Cursor.lockState = CursorLockMode.None;
-        Cursor.visible   = true;
+        Cursor.visible = true;
     }
 
     private void Close()
@@ -77,11 +88,11 @@ public class UpgradePanel : MonoBehaviour
         _waveText.text    = $"Wave {wave} Complete!";
         _pointsText.text  = $"Upgrade Points: {_stats.UpgradePoints}";
 
-        _healthLabel.text   = $"HP: {_stats.MaxHealth:F0}";
-        _speedLabel.text    = $"Speed: {_stats.MoveSpeed:F1}";
-        _damageLabel.text   = $"Damage: {_stats.Damage:F0}";
-        _fireRateLabel.text = $"Fire Rate: {(1f / _stats.FireRate):F1}/s";
-        _jumpLabel.text     = $"Jump: {_stats.JumpForce:F1}";
+        //_healthLabel.text   = $"HP: {_stats.MaxHealth:F0}";
+        //_speedLabel.text    = $"Speed: {_stats.MoveSpeed:F1}";
+        //_damageLabel.text   = $"Damage: {_stats.Damage:F0}";
+        //_fireRateLabel.text = $"Fire Rate: {(1f / _stats.FireRate):F1}/s";
+        //_jumpLabel.text     = $"Jump: {_stats.JumpForce:F1}";
 
         bool hasPoints = _stats.UpgradePoints > 0;
         _upgradeHealthBtn.interactable   = hasPoints;

@@ -37,11 +37,11 @@ public class WaveManager : MonoBehaviour
     {
         _currentWave = waveNumber;
         _waveActive = true;
-
         _activeEnemies.Clear();
 
-        bool isBoss = waveNumber % 10 == 0 && waveNumber > 0;
+        EventManager.RaiseWaveStarted(_currentWave);
 
+        bool isBoss = waveNumber % 10 == 0 && waveNumber > 0;
         if (isBoss)
             StartCoroutine(SpawnBossWave());
         else
@@ -89,14 +89,18 @@ public class WaveManager : MonoBehaviour
 
     private void SpawnEnemy(EnemyType type, Vector3 position)
     {
-        EnemyBase enemy = EnemyFactory.Instance.Create(type, position, _currentWave, _playerTransform);
+        EnemyBase enemy = EnemyFactory.instance.Create(type, position, _currentWave, _playerTransform);
         _activeEnemies.Add(enemy);
     }
 
     private Vector3 GetRandomSpawnPoint()
     {
         if (_spawnPoints == null || _spawnPoints.Length == 0)
-            return _playerTransform.position + Random.insideUnitSphere * 20f;
+        {
+            Debug.LogWarning("No SpawnPoints assigned!");
+            Vector2 rand = Random.insideUnitCircle.normalized * Random.Range(15f, 25f);
+            return _playerTransform.position + new Vector3(rand.x, 0, rand.y);
+        }
 
         return _spawnPoints[Random.Range(0, _spawnPoints.Length)].position;
     }
