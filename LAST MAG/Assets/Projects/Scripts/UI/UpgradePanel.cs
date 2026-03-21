@@ -85,13 +85,13 @@ public class UpgradePanel : MonoBehaviour
     {
         int wave = GameManager.instance != null ? GameManager.instance.CurrentWave : 0;
         _waveText.text    = $"Wave {wave} Complete!";
-        _pointsText.text  = $"{_stats.UpgradePoints}";
+        _pointsText.text  = $"{_stats.UpgradePoints:D2}";
 
-        _healthLabel.text = $"HP: {_stats.MaxHealth:F0}";
-        _speedLabel.text = $"Speed: {_stats.MoveSpeed:F1}";
-        _damageLabel.text = $"Damage: {_stats.Damage:F0}";
-        _fireRateLabel.text = $"Fire Rate: {(1f / _stats.FireRate):F1}/s";
-        _reloadSpeedLabel.text = $"Reload: {_stats.ReloadTime:F1}s";
+        _healthLabel.text = $"{_stats.MaxHealth:F0}";
+        _speedLabel.text = $"{_stats.MoveSpeed:F1}";
+        _damageLabel.text = $"{_stats.Damage:F0}";
+        _fireRateLabel.text = $"{(1f / _stats.FireRate):F1}/s";
+        _reloadSpeedLabel.text = $"{_stats.ReloadTime:F1}s";
 
         bool hasPoints = _stats.UpgradePoints > 0;
         _upgradeHealthBtn.interactable = hasPoints;

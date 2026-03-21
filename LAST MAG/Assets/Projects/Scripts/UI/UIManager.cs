@@ -86,7 +86,7 @@ public class UIManager : MonoBehaviour
     {
         float fillAmount = current / max;
         _healthBar.value = fillAmount;
-        _healthText.text = $"{Mathf.CeilToInt(current)} / {Mathf.CeilToInt(max)}";
+        _healthText.text = $"{Mathf.CeilToInt(current):D3}";
     }
 
     private void UpdateAmmoDisplay(int current, int max)
@@ -137,11 +137,17 @@ public class UIManager : MonoBehaviour
         StartCoroutine(ShowWaveAnnouncement(wave));
     }
 
+    Color Hex(string hex)
+    {
+        ColorUtility.TryParseHtmlString(hex, out Color c);
+        return c;
+    }
+
     private IEnumerator ShowWaveAnnouncement(int wave)
     {
         bool isBoss = wave % 10 == 0 && wave > 0;
-        _waveAnnouncementText.text  = isBoss ? $"BOSS WAVE {wave} " : $"— Wave {wave} —";
-        _waveAnnouncementText.color = isBoss ? Color.red : Color.white;
+        _waveAnnouncementText.text  = isBoss ? $"BOSS WAVE {wave} " : $"— WAVE {wave} INITIATED —";
+        _waveAnnouncementText.color = isBoss ? Hex("#720A00") : Hex("#E8920A");
 
         yield return new WaitForSecondsRealtime(2.5f);
         _waveAnnouncementText.text = "";
@@ -158,18 +164,18 @@ public class UIManager : MonoBehaviour
 
     private void UpdateEnemyCount(int count)
     {
-        if (_enemyCountText) _enemyCountText.text = $"Enemies: {count}";
+        if (_enemyCountText) _enemyCountText.text = $"{count:D2}";
     }
 
     private void UpdateScore(int score)
     {
-        if (_scoreText) _scoreText.text = $"Score: {score:N0}";
+        if (_scoreText) _scoreText.text = $"{score:N0}".PadLeft(7, '0');
     }
 
     public void ShowGameOver(int score, int wave)
     {
         _gameOverPanel.SetActive(true);
-        _finalScoreText.text = $"Score: {score:N0}";
+        _finalScoreText.text = $"{score:N0}".PadLeft(7, '0');
         _finalWaveText.text  = $"Survived to Wave {wave}";
     }
 
