@@ -130,10 +130,16 @@ public class PlayerShooter : MonoBehaviour
         _isShooting = false;
         StopAllCoroutines();
         _isReloading = false;
+
+        _nextFireTime = float.MaxValue;
     }
 
     private void HandleMenuClose()
     {
+        _isShooting = false;
+        _isReloading = false;
+        _nextFireTime = Time.time + 0.5f;
+
         EventManager.RaiseAmmoChanged(_stats.CurrentAmmo, _stats.MagazineSize);
     }
 

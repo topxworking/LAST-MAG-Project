@@ -48,6 +48,13 @@ public class PlayerController : MonoBehaviour
         Cursor.visible = false;
     }
 
+    private void Start()
+    {
+        var health = GetComponent<PlayerHealth>();
+        if (health != null)
+            _stats = health.Stats;
+    }
+
     private void OnEnable()
     {
         _input.OnMove += HandleMove;
@@ -82,6 +89,7 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        if (_stats == null) return;
         if (!_canMove) return;
         CheckGround();
         ApplyMovement();

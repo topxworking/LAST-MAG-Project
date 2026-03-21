@@ -54,12 +54,6 @@ public class UpgradePanel : MonoBehaviour
             if (ph != null) _stats = ph.Stats;
         }
 
-        if (_stats == null)
-        {
-            Debug.LogError("[UpgradePanel] PlayerHealth not found!");
-            return;
-        }
-
         _stats.UpgradePoints += _pointsEarnedThisWave;
         _panel.SetActive(true);
         RefreshUI();
