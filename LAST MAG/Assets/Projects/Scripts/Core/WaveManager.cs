@@ -119,7 +119,6 @@ public class WaveManager : MonoBehaviour
     {
         if (_spawnPoints == null || _spawnPoints.Length == 0)
         {
-            Debug.LogWarning("No SpawnPoints assigned!");
             Vector2 rand = Random.insideUnitCircle.normalized * Random.Range(15f, 25f);
             return _playerTransform.position + new Vector3(rand.x, 0, rand.y);
         }

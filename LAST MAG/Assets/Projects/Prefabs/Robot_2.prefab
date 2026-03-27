@@ -53,6 +53,10 @@ PrefabInstance:
       value: Robot_2
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: bfd2f12416b4c424d9be90dd79fe3e18, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: bfd2f12416b4c424d9be90dd79fe3e18, type: 3}
       propertyPath: m_TagString
       value: Enemy
       objectReference: {fileID: 0}
@@ -137,6 +141,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09ecf46b0cfec8d4c8b07836f7711e6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyMelee
+  _deathVFX: {fileID: 1194611721188141604, guid: 53b1848d00e994b4ca7ebdb54b278a90, type: 3}
   _bodyRenderer: {fileID: 7688397081608618493}
   _hitFlashMat: {fileID: 2100000, guid: b30e0bc0de6c23342a22ef61b2b57e57, type: 2}
 --- !u!23 &7688397081608618493

@@ -15,6 +15,9 @@ public class IdleState : IEnemyState
 
     public void Enter(EnemyBase e)
     {
+        if (e.Agent.isActiveAndEnabled && e.Agent.isOnNavMesh)
+            e.Agent.isStopped = false;
+
         if (e.Agent.isOnNavMesh)
         {
             e.Agent.isStopped = false;
@@ -43,6 +46,9 @@ public class IdleState : IEnemyState
 
     public void Exit(EnemyBase e)
     {
+        if (e.Agent.isActiveAndEnabled && e.Agent.isOnNavMesh)
+            e.Agent.isStopped = false;
+
         if (e.Agent.isOnNavMesh)
             e.Agent.speed = e.Stats.MoveSpeed;
     }
@@ -63,7 +69,12 @@ public class IdleState : IEnemyState
 
 public class ChaseState : IEnemyState
 {
-    public void Enter(EnemyBase e) { }
+    public void Enter(EnemyBase e)
+    {
+        if (e.Agent.isActiveAndEnabled && e.Agent.isOnNavMesh)
+            e.Agent.isStopped = false;
+    }
+
     public void Tick(EnemyBase e)
     {
         if (e.DistanceToPlayer <= e.Stats.AttackRange)
@@ -78,7 +89,11 @@ public class ChaseState : IEnemyState
         }
         e.Agent.SetDestination(e.PlayerTransform.position);
     }
-    public void Exit(EnemyBase e) { e.Agent.isStopped = false; }
+    public void Exit(EnemyBase e)
+    {
+        if (e.Agent.isActiveAndEnabled && e.Agent.isOnNavMesh)
+            e.Agent.isStopped = false;
+    }
 }
 
 public class AttackState : IEnemyState
@@ -86,7 +101,8 @@ public class AttackState : IEnemyState
     private float _timer;
     public void Enter(EnemyBase e)
     {
-        e.Agent.isStopped = true;
+        if (e.Agent.isActiveAndEnabled && e.Agent.isOnNavMesh)
+            e.Agent.isStopped = true;
         _timer = 0f;
     }
     public void Tick(EnemyBase e)
@@ -108,14 +124,20 @@ public class AttackState : IEnemyState
             e.PerformAttack();
         }
     }
-    public void Exit(EnemyBase e) { e.Agent.isStopped = false; }
+    public void Exit(EnemyBase e)
+    {
+        if (e.Agent.isActiveAndEnabled && e.Agent.isOnNavMesh)
+            e.Agent.isStopped = false;
+    }
 }
 
 public class DeadState : IEnemyState
 {
     public void Enter(EnemyBase e)
     {
-        e.Agent.isStopped = true;
+        if (e.Agent.isActiveAndEnabled && e.Agent.isOnNavMesh)
+            e.Agent.isStopped = true;
+        e.Agent.enabled = false;
         e.OnDeath();
     }
     public void Tick(EnemyBase e)  { }
@@ -125,10 +147,10 @@ public class DeadState : IEnemyState
 [RequireComponent(typeof(NavMeshAgent))]
 public abstract class EnemyBase : MonoBehaviour
 {
-    public  NavMeshAgent  Agent         { get; private set; }
+    public  NavMeshAgent Agent { get; protected set; }
     public EnemyStats Stats { get; protected set; }
     public Transform PlayerTransform { get; protected set; }
-    public  float         DistanceToPlayer { get; private set; }
+    public float DistanceToPlayer { get; protected set; }
 
     public IEnemyState IdleState   { get; } = new IdleState();
     public IEnemyState ChaseState  { get; } = new ChaseState();
@@ -176,7 +198,6 @@ public abstract class EnemyBase : MonoBehaviour
     {
         if (_isDead) return;
         _currentHealth -= amount;
-        Debug.Log($"[Combat] {gameObject.name} took {amount} dmg > HP: {_currentHealth:F0}/{Stats.MaxHealth:F0}");
         OnHit(amount);
 
         if (!_isDead)
@@ -199,13 +220,19 @@ public abstract class EnemyBase : MonoBehaviour
 
     protected virtual void OnHit(float amount) { }
 
+    [Header("Death Effect")]
+    [SerializeField] private GameObject _deathVFX;
+
     public virtual void OnDeath()
     {
-        if (Stats != null)
-            EventManager.RaiseEnemyKilled(Stats.ScoreValue);
+        if (_deathVFX != null)
+        {
+            GameObject fx = Instantiate(_deathVFX, transform.position, Quaternion.identity);
+            Destroy(fx, 3f);
+        }
 
+        EventManager.RaiseEnemyKilled(Stats.ScoreValue);
         WaveManager.instance?.RegisterEnemyKilled();
-
         Destroy(gameObject, 1.5f);
     }
 }

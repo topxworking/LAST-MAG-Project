@@ -30,13 +30,10 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject _gameOverPanel;
     [SerializeField] private TextMeshProUGUI _finalScoreText;
     [SerializeField] private TextMeshProUGUI _finalWaveText;
+    [SerializeField] private TextMeshProUGUI _finalKillsText;
     [SerializeField] private Button _restartButton;
 
     private Coroutine _reloadBarCoroutine;
-
-    [Header("Crosshair")]
-    [SerializeField] private Image _crosshairDot;
-    [SerializeField] private Image _crosshairAimRing;
 
     [Header("Countdown")]
     [SerializeField] private GameObject _countdownRoot;
@@ -95,7 +92,7 @@ public class UIManager : MonoBehaviour
     {
         if (_ammoText == null) return;
 
-        _ammoText.text = $"{current}/{max}";
+        _ammoText.text = $"{current:D2}";
         _ammoText.color = current <= 5 ? Color.red
                         : current <= 10 ? new Color(1f, 0.6f, 0f)
                         : Color.white;
@@ -134,7 +131,7 @@ public class UIManager : MonoBehaviour
     private void UpdateWaveDisplay(int wave)
     {
         if (_waveText != null)
-            _waveText.text = $"WAVE {wave}";
+            _waveText.text = $"{wave:D2}";
 
         StartCoroutine(ShowWaveAnnouncement(wave));
     }
@@ -174,11 +171,16 @@ public class UIManager : MonoBehaviour
         if (_scoreText) _scoreText.text = $"{score:N0}".PadLeft(7, '0');
     }
 
-    public void ShowGameOver(int score, int wave)
+    public void ShowGameOver(int score, int wave, int kills)
     {
         _gameOverPanel.SetActive(true);
         _finalScoreText.text = $"{score:N0}".PadLeft(7, '0');
-        _finalWaveText.text  = $"Survived to Wave {wave}";
+        _finalWaveText.text  = $"{wave:D2}";
+
+        if (_finalKillsText != null)
+        {
+            _finalKillsText.text = $"{kills:D2}";
+        }
     }
 
     private void UpdateBossHealthBar(float current, float max)

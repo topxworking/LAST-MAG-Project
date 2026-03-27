@@ -32,7 +32,6 @@ public class PlayerStats
         MaxHealth += 25f;
         CurrentHealth += 25f;
         UpgradePoints--;
-        Debug.Log($"[Upgrade] HP → {MaxHealth} (Points left: {UpgradePoints})");
         return true;
     }
 
@@ -41,7 +40,6 @@ public class PlayerStats
         if (UpgradePoints < 1) return false;
         MoveSpeed += 0.5f;
         UpgradePoints--;
-        Debug.Log($"[Upgrade] Speed → {MoveSpeed} (Points left: {UpgradePoints})");
         return true;
     }
 
@@ -50,7 +48,6 @@ public class PlayerStats
         if (UpgradePoints < 1) return false;
         Damage += 10f;
         UpgradePoints--;
-        Debug.Log($"[Upgrade] Damage → {Damage} (Points left: {UpgradePoints})");
         return true;
     }
 
@@ -59,7 +56,6 @@ public class PlayerStats
         if (UpgradePoints < 1) return false;
         FireRate = Mathf.Max(0.05f, FireRate - 0.02f);
         UpgradePoints--;
-        Debug.Log($"[Upgrade] FireRate → {FireRate:F3}s (Points left: {UpgradePoints})");
         return true;
     }
 

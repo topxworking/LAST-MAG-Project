@@ -84,6 +84,10 @@ PrefabInstance:
       value: Robot_1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: adc744fd4596089448c9cf74ec1611ce, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: adc744fd4596089448c9cf74ec1611ce, type: 3}
       propertyPath: m_TagString
       value: Enemy
       objectReference: {fileID: 0}
@@ -170,6 +174,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc9c2b78c0855554fae79c4a7e94709a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyFlying
+  _deathVFX: {fileID: 1194611721188141604, guid: 53b1848d00e994b4ca7ebdb54b278a90, type: 3}
   _hoverHeight: 3
   _hoverSpeed: 2
   _hoverAmplitude: 0.5

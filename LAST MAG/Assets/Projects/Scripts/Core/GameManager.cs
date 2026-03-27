@@ -55,7 +55,6 @@ public class GameManager : MonoBehaviour
     private void StartNextWave()
     {
         CurrentWave++;
-        Debug.Log("[GameManager] StartNextWave: " + CurrentWave);
         if (IsBossWave)
         {
             CurrentState = GameState.BossFight;
@@ -93,7 +92,6 @@ public class GameManager : MonoBehaviour
 
     private void ResumeAfterUpgrade()
     {
-        Debug.Log("[GameManager] ResumeAfterUpgrade called, starting wave: " + (CurrentWave + 1));
         Time.timeScale = 1f;
         StartNextWave();
     }

@@ -75,7 +75,6 @@ public class BossEnemy : EnemyBase
         {
             _phase2Active = true;
             Agent.speed = Stats.MoveSpeed * 1.5f;
-            Debug.Log("[Boss] Phase 2 activated!");
         }
     }
 
@@ -87,7 +86,6 @@ public class BossEnemy : EnemyBase
 
     private void GroundSlam()
     {
-        Debug.Log("[Boss] GROUND SLAM!");
         Collider[] hits = Physics.OverlapSphere(transform.position, _slamRadius);
         foreach (var c in hits)
         {

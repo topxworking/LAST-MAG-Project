@@ -180,6 +180,13 @@ public class PlayerController : MonoBehaviour
         _shooter?.StopShooting();
     }
 
+    public void AddRecoil(float pitchKick, float yawKick)
+    {
+        _pitch -= pitchKick;
+        _yaw += yawKick;
+        _pitch = Mathf.Clamp(_pitch, _pitchMin, _pitchMax);
+    }
+
     private void OnDrawGizmosSelected()
     {
         if (_cc == null) _cc = GetComponent<CharacterController>();

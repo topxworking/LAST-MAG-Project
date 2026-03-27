@@ -31,8 +31,6 @@ public class Bullet : MonoBehaviour, IPoolable
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log($"[Bullet] Hit: {other.gameObject.name} | Tag: {other.tag} | IsTrigger: {other.isTrigger}");
-
         if (other.isTrigger) return;
         if (_isEnemyBullet && other.CompareTag("Enemy")) return;
         if (!_isEnemyBullet && other.CompareTag("Player")) return;
