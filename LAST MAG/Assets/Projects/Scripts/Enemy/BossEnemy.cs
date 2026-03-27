@@ -14,6 +14,31 @@ public class BossEnemy : EnemyBase
     private float _slamTimer;
     private float _maxHp;
     private float _accumulatedDamage;
+    private Animator _animator;
+
+    private static readonly int HashSpeed = Animator.StringToHash("Speed");
+    private static readonly int HashIsIdle = Animator.StringToHash("IsIdle");
+
+    protected override void Awake()
+    {
+        base.Awake();
+        _animator = GetComponent<Animator>();
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        if (_animator != null)
+        {
+            float speed = Agent.isOnNavMesh && Agent.enabled
+                ? Agent.velocity.magnitude
+                : 0f;
+
+            _animator.SetFloat(HashSpeed, speed);
+            _animator.SetBool(HashIsIdle, speed < 0.1f);
+        }
+    }
 
     public override void PerformAttack()
     {

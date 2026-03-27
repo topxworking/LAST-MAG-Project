@@ -8,7 +8,7 @@ public class EnemyRanged : EnemyBase
     {
         if (_muzzle == null) return;
 
-        Vector3 dir = (PlayerTransform.position + Vector3.up * 1f - _muzzle.position).normalized;
+        Vector3 dir = (PlayerTransform.position + Vector3.up * 0.5f - _muzzle.position).normalized;
         Quaternion rot = Quaternion.LookRotation(dir);
 
         Bullet bullet = PoolManager.instance.GetBullet(_muzzle.position, rot);

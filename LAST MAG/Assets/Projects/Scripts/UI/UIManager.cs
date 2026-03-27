@@ -93,7 +93,7 @@ public class UIManager : MonoBehaviour
     {
         if (_ammoText == null) return;
 
-        _ammoText.text = $"{current} / {max}";
+        _ammoText.text = $"{current}/{max}";
         _ammoText.color = current <= 5 ? Color.red
                         : current <= 10 ? new Color(1f, 0.6f, 0f)
                         : Color.white;
@@ -132,7 +132,7 @@ public class UIManager : MonoBehaviour
     private void UpdateWaveDisplay(int wave)
     {
         if (_waveText != null)
-            _waveText.text = $"Wave {wave}";
+            _waveText.text = $"WAVE {wave}";
 
         StartCoroutine(ShowWaveAnnouncement(wave));
     }
@@ -156,7 +156,7 @@ public class UIManager : MonoBehaviour
     private void HandleBossWave(int wave)
     {
         _bossBarRoot.SetActive(true);
-        if (_bossNameText) _bossNameText.text = $"BOSS — Wave {wave}";
+        if (_bossNameText) _bossNameText.text = $"BOSS — WAVE {wave}";
         if (_bossHealthBar) _bossHealthBar.value = 1f;
     }
 

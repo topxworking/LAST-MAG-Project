@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public enum EnemyType { Melee, Ranged, Boss }
+public enum EnemyType { Melee, Ranged, Boss, Flying, FlyingElite }
 
 [System.Serializable]
 public struct EnemyPrefabEntry

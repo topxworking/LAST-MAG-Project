@@ -126,8 +126,8 @@ public class DeadState : IEnemyState
 public abstract class EnemyBase : MonoBehaviour
 {
     public  NavMeshAgent  Agent         { get; private set; }
-    public  EnemyStats    Stats         { get; private set; }
-    public  Transform     PlayerTransform { get; private set; }
+    public EnemyStats Stats { get; protected set; }
+    public Transform PlayerTransform { get; protected set; }
     public  float         DistanceToPlayer { get; private set; }
 
     public IEnemyState IdleState   { get; } = new IdleState();
@@ -144,7 +144,7 @@ public abstract class EnemyBase : MonoBehaviour
         Agent = GetComponent<NavMeshAgent>();
     }
 
-    public void Initialize(EnemyStats stats, Transform player)
+    public virtual void Initialize(EnemyStats stats, Transform player)
     {
         Stats           = stats;
         PlayerTransform = player;

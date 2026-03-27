@@ -67,9 +67,13 @@ public class WaveManager : MonoBehaviour
 
         for (int i = 0; i < _enemiesToSpawn; i++)
         {
-            EnemyType type = (_currentWave >= 5 && i % 3 == 2)
-                ? EnemyType.Ranged
-                : EnemyType.Melee;
+            EnemyType type;
+            if (_currentWave >= 3 && i % 4 == 3)
+                type = EnemyType.Flying;
+            else if (_currentWave >= 5 && i % 3 == 2)
+                type = EnemyType.Ranged;
+            else
+                type = EnemyType.Melee;
 
             SpawnEnemy(type, GetRandomSpawnPoint());
             yield return new WaitForSeconds(_spawnInterval);
@@ -79,13 +83,20 @@ public class WaveManager : MonoBehaviour
     private IEnumerator SpawnBossWave()
     {
         int addCount = 4 + (_currentWave / 10);
-        _enemiesToSpawn = addCount + 1;
+        int eliteCount = 2;
+        _enemiesToSpawn = addCount + eliteCount + 1;
         _enemiesAlive = _enemiesToSpawn;
         EventManager.RaiseEnemyCountChanged(_enemiesAlive);
 
         for (int i = 0; i < addCount; i++)
         {
             SpawnEnemy(EnemyType.Melee, GetRandomSpawnPoint());
+            yield return new WaitForSeconds(_spawnInterval);
+        }
+
+        for (int i = 0; i < eliteCount; i++)
+        {
+            SpawnEnemy(EnemyType.FlyingElite, GetRandomSpawnPoint());
             yield return new WaitForSeconds(_spawnInterval);
         }
 
