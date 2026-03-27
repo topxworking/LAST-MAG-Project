@@ -34,6 +34,14 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Button _restartButton;
     [SerializeField] private Button _mainMenuButton;
 
+    [Header("Settings UI")]
+    [SerializeField] private GameObject _settingsPanel;
+    [SerializeField] private Slider _sensSlider;
+    [SerializeField] private Slider _volumeSlider;
+
+    [Header("Menu Groups")]
+    [SerializeField] private GameObject _pauseMenuButtonsRoot;
+
     private Coroutine _reloadBarCoroutine;
 
     [Header("Countdown")]
@@ -45,10 +53,46 @@ public class UIManager : MonoBehaviour
         _gameOverPanel.SetActive(false);
         _bossBarRoot.SetActive(false);
         _waveAnnouncementText.text = "";
-        if (_reloadRoot) _reloadRoot.SetActive(false);
+        if (_reloadRoot) _reloadRoot.SetActive(false);      
 
         _restartButton.onClick.AddListener(() => GameManager.instance?.RestartGame());
         _mainMenuButton.onClick.AddListener(() => GameManager.instance?.MainMenu());
+    }
+
+    private void Start()
+    {
+        StartCoroutine(SetupSlidersDelayed());
+    }
+
+    private IEnumerator SetupSlidersDelayed()
+    {
+        yield return null;
+
+        if (SettingsManager.instance != null)
+        {
+            if (_sensSlider)
+            {
+                _sensSlider.minValue = 0.1f;
+                _sensSlider.maxValue = 5f;
+                _sensSlider.value = SettingsManager.instance.MouseSensitivity;
+                _sensSlider.onValueChanged.RemoveAllListeners();
+                _sensSlider.onValueChanged.AddListener(val => SettingsManager.instance.SetMouseSensitivity(val));
+            }
+
+            if (_volumeSlider)
+            {
+                float savedVol = PlayerPrefs.GetFloat("MasterVol", 0.75f);
+                _volumeSlider.minValue = 0.0001f;
+                _volumeSlider.maxValue = 1f;
+                _volumeSlider.value = savedVol;
+                _volumeSlider.onValueChanged.RemoveAllListeners();
+                _volumeSlider.onValueChanged.AddListener(val => SettingsManager.instance.SetMasterVolume(val));
+            }
+        }
+        else
+        {
+            Debug.LogError("UIManager: SettingsManager.instance is null! Make sure SettingsManager is in the scene.");
+        }
     }
 
     private void OnEnable()
@@ -204,5 +248,16 @@ public class UIManager : MonoBehaviour
     private void HideCountdown()
     {
         if (_countdownRoot) _countdownRoot.SetActive(false);
+    }
+
+    public void ToggleSettings()
+    {
+        bool isSettingsOpening = !_settingsPanel.activeSelf;
+        _settingsPanel.SetActive(isSettingsOpening);
+
+        if (_pauseMenuButtonsRoot != null)
+        {
+            _pauseMenuButtonsRoot.SetActive(!isSettingsOpening);
+        }
     }
 }

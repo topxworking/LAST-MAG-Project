@@ -131,15 +131,10 @@ public class PlayerController : MonoBehaviour
                 _distanceWalked = 0;
             }
         }
-        else if (!_isGrounded)
-        {
-            Debug.Log("Player is NOT Grounded!");
-        }
     }
 
     private void PlayFootstep()
     {
-        Debug.Log("Footstep Played!");
         if (_footstepSounds.Length == 0) return;
         int index = Random.Range(0, _footstepSounds.Length);
         _audioSource.PlayOneShot(_footstepSounds[index], 0.4f);
@@ -147,13 +142,14 @@ public class PlayerController : MonoBehaviour
 
     private void ApplyLook()
     {
-        float sens = SettingsManager.Instance != null
-            ? (_isAiming ? SettingsManager.Instance.AimSensitivity
-            : SettingsManager.Instance.MouseSensitivity)
-    :       (_isAiming ? _aimSensitivity : _mouseSensitivity);
+        float baseSens = SettingsManager.instance != null
+        ? SettingsManager.instance.MouseSensitivity
+        : _mouseSensitivity;
 
-        _yaw += _lookInput.x * sens;
-        _pitch -= _lookInput.y * sens;
+        float finalSens = _isAiming ? (baseSens * _aimSensitivity) : baseSens;
+
+        _yaw += _lookInput.x * finalSens;
+        _pitch -= _lookInput.y * finalSens;
         _pitch = Mathf.Clamp(_pitch, _pitchMin, _pitchMax);
 
         transform.rotation = Quaternion.Euler(0f, _yaw, 0f);
@@ -169,12 +165,6 @@ public class PlayerController : MonoBehaviour
 
     private void HandleMove(Vector2 v) => _moveInput = v;
     private void HandleLook(Vector2 v) => _lookInput = v;
-
-    private void HandleJump()
-    {
-        if (!_isGrounded) return;
-        _verticalVelocity = Mathf.Sqrt(_stats.JumpForce * -2f * _gravity);
-    }
 
     private void HandleShootStart() => _shooter?.StartShooting();
     private void HandleShootStop() => _shooter?.StopShooting();

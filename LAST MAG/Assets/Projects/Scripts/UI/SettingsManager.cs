@@ -3,19 +3,25 @@ using UnityEngine.Audio;
 
 public class SettingsManager : MonoBehaviour
 {
-    public static SettingsManager Instance { get; private set; }
+    public static SettingsManager instance { get; private set; }
 
-    [Header("Audio Mixers")]
+    [Header("Settings")]
     [SerializeField] private AudioMixer _masterMixer;
 
     public float MouseSensitivity { get; private set; } = 2f;
-    public float AimSensitivity { get; private set; } = 0.8f;
 
     private void Awake()
     {
-        if (Instance != null) { Destroy(gameObject); return; }
-        Instance = this;
-        Load();
+        if (instance != null && instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        instance = this;
+
+        DontDestroyOnLoad(gameObject);
+
+        LoadSettings();
     }
 
     public void SetMouseSensitivity(float val)
@@ -24,39 +30,20 @@ public class SettingsManager : MonoBehaviour
         PlayerPrefs.SetFloat("MouseSens", val);
     }
 
-    public void SetAimSensitivity(float val)
-    {
-        AimSensitivity = val;
-        PlayerPrefs.SetFloat("AimSens", val);
-    }
-
     public void SetMasterVolume(float val)
     {
-        float db = val > 0 ? Mathf.Log10(val / 100f) * 20f : -80f;
-        _masterMixer?.SetFloat("MasterVol", db);
+        float dB = Mathf.Log10(Mathf.Clamp(val, 0.0001f, 1f)) * 20f;
+
+        if (_masterMixer != null)
+            _masterMixer.SetFloat("MasterVol", dB);
+
         PlayerPrefs.SetFloat("MasterVol", val);
     }
 
-    public void SetSFXVolume(float val)
-    {
-        float db = val > 0 ? Mathf.Log10(val / 100f) * 20f : -80f;
-        _masterMixer?.SetFloat("SFXVol", db);
-        PlayerPrefs.SetFloat("SFXVol", val);
-    }
-
-    public void SetMusicVolume(float val)
-    {
-        float db = val > 0 ? Mathf.Log10(val / 100f) * 20f : -80f;
-        _masterMixer?.SetFloat("MusicVol", db);
-        PlayerPrefs.SetFloat("MusicVol", val);
-    }
-
-    private void Load()
+    private void LoadSettings()
     {
         MouseSensitivity = PlayerPrefs.GetFloat("MouseSens", 2f);
-        AimSensitivity = PlayerPrefs.GetFloat("AimSens", 0.8f);
-        SetMasterVolume(PlayerPrefs.GetFloat("MasterVol", 80f));
-        SetSFXVolume(PlayerPrefs.GetFloat("SFXVol", 70f));
-        SetMusicVolume(PlayerPrefs.GetFloat("MusicVol", 50f));
+        float savedVol = PlayerPrefs.GetFloat("MasterVol", 0.75f);
+        SetMasterVolume(savedVol);
     }
 }
