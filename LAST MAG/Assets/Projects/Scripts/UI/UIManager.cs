@@ -65,6 +65,7 @@ public class UIManager : MonoBehaviour
         EventManager.OnScoreChanged += UpdateScore;
         EventManager.OnCountdownTick += ShowCountdown;
         EventManager.OnCountdownFinished += HideCountdown;
+        EventManager.OnBossHealthChanged += UpdateBossHealthBar;
     }
 
     private void OnDisable()
@@ -80,6 +81,7 @@ public class UIManager : MonoBehaviour
         EventManager.OnScoreChanged -= UpdateScore;
         EventManager.OnCountdownTick -= ShowCountdown;
         EventManager.OnCountdownFinished -= HideCountdown;
+        EventManager.OnBossHealthChanged -= UpdateBossHealthBar;
     }
 
     private void UpdateHealthBar(float current, float max)
@@ -179,7 +181,7 @@ public class UIManager : MonoBehaviour
         _finalWaveText.text  = $"Survived to Wave {wave}";
     }
 
-    public void UpdateBossHealthBar(float current, float max)
+    private void UpdateBossHealthBar(float current, float max)
     {
         if (_bossHealthBar != null)
             _bossHealthBar.value = current / max;
