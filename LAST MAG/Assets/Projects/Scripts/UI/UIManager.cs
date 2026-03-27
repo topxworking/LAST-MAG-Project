@@ -57,6 +57,8 @@ public class UIManager : MonoBehaviour
 
         _restartButton.onClick.AddListener(() => GameManager.instance?.RestartGame());
         _mainMenuButton.onClick.AddListener(() => GameManager.instance?.MainMenu());
+
+        Time.timeScale = 1f;
     }
 
     private void Start()
@@ -109,6 +111,7 @@ public class UIManager : MonoBehaviour
         EventManager.OnCountdownTick += ShowCountdown;
         EventManager.OnCountdownFinished += HideCountdown;
         EventManager.OnBossHealthChanged += UpdateBossHealthBar;
+        EventManager.OnPlayerHealthChanged += UpdateHealthBar;
     }
 
     private void OnDisable()
@@ -125,10 +128,13 @@ public class UIManager : MonoBehaviour
         EventManager.OnCountdownTick -= ShowCountdown;
         EventManager.OnCountdownFinished -= HideCountdown;
         EventManager.OnBossHealthChanged -= UpdateBossHealthBar;
+        EventManager.OnPlayerHealthChanged -= UpdateHealthBar;
     }
 
     private void UpdateHealthBar(float current, float max)
     {
+        if (_healthBar == null || _healthText == null) return;
+
         float fillAmount = current / max;
         _healthBar.value = fillAmount;
         _healthText.text = $"{Mathf.CeilToInt(current):D3}";
@@ -259,5 +265,12 @@ public class UIManager : MonoBehaviour
         {
             _pauseMenuButtonsRoot.SetActive(!isSettingsOpening);
         }
+    }
+
+    public void ClearAllPanels()
+    {
+        if (_settingsPanel != null) _settingsPanel.SetActive(false);
+        if (_gameOverPanel != null) _gameOverPanel.SetActive(false);
+        if (_pauseMenuButtonsRoot != null) _pauseMenuButtonsRoot.SetActive(false);
     }
 }

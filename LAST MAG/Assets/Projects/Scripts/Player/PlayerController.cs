@@ -49,10 +49,7 @@ public class PlayerController : MonoBehaviour
     {
         _cc = GetComponent<CharacterController>();
         _shooter = GetComponent<PlayerShooter>();
-        _stats = GetComponent<PlayerHealth>().Stats;
-
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        _stats = GetComponent<PlayerHealth>().Stats;       
     }
 
     private void Start()
@@ -60,6 +57,10 @@ public class PlayerController : MonoBehaviour
         var health = GetComponent<PlayerHealth>();
         if (health != null)
             _stats = health.Stats;
+
+        Time.timeScale = 1f;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     private void OnEnable()

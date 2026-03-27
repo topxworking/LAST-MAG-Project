@@ -26,10 +26,8 @@ public class EnemyFlyingElite : EnemyBase
 
     public override void Initialize(EnemyStats stats, Transform player)
     {
-        Stats = stats;
-        PlayerTransform = player;
+        base.Initialize(stats, player);
         _baseY = transform.position.y + _hoverHeight;
-        _attackTimer = 0f;
     }
 
     protected override void Update()

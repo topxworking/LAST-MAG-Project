@@ -19,8 +19,6 @@ public class SettingsManager : MonoBehaviour
         }
         instance = this;
 
-        DontDestroyOnLoad(gameObject);
-
         LoadSettings();
     }
 

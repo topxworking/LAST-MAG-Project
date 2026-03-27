@@ -148,6 +148,13 @@ public class GameManager : MonoBehaviour
     public void MainMenu()
     {
         Time.timeScale = 1f;
+
+        if (_inputReader != null)
+        {
+            _inputReader.EnablePlayerInput();
+        }
+
+        EventManager.ClearAllEvents();
         SceneManager.LoadScene("MainMenu");
     }
 }

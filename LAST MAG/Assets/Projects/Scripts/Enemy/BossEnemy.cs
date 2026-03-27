@@ -98,9 +98,9 @@ public class BossEnemy : EnemyBase
 
     public override void Initialize(EnemyStats stats, Transform player)
     {
-        _maxHp = stats.MaxHealth;
-        _accumulatedDamage = 0f;
         base.Initialize(stats, player);
+        _maxHp = stats.MaxHealth;
+        _accumulatedDamage = 0f;        
 
         EventManager.RaiseBossHealthChanged(_maxHp, _maxHp);
     }

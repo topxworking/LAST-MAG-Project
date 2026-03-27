@@ -158,8 +158,8 @@ public abstract class EnemyBase : MonoBehaviour
     public IEnemyState DeadState   { get; } = new DeadState();
 
     private IEnemyState _currentState;
-    private float       _currentHealth;
-    private bool        _isDead;
+    private float _currentHealth;
+    private bool _isDead;
 
     protected virtual void Awake()
     {
@@ -168,10 +168,10 @@ public abstract class EnemyBase : MonoBehaviour
 
     public virtual void Initialize(EnemyStats stats, Transform player)
     {
-        Stats           = stats;
+        Stats = stats;
         PlayerTransform = player;
         _currentHealth  = stats.MaxHealth;
-        _isDead         = false;
+        _isDead = false;
 
         Agent.speed         = stats.MoveSpeed;
         Agent.stoppingDistance = stats.AttackRange * 0.9f;
