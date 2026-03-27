@@ -231,6 +231,11 @@ public abstract class EnemyBase : MonoBehaviour
             Destroy(fx, 3f);
         }
 
+        if (GameManager.instance != null && Stats != null)
+        {
+            GameManager.instance.RegisterKill(Stats.EnemyType);
+        }
+
         EventManager.RaiseEnemyKilled(Stats.ScoreValue);
         WaveManager.instance?.RegisterEnemyKilled();
         Destroy(gameObject, 1.5f);

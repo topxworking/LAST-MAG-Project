@@ -9,8 +9,14 @@ public class GameManager : MonoBehaviour
 
     public GameState CurrentState { get; private set; } = GameState.Playing;
 
-    public int  Score       { get; private set; }
-    public int  CurrentWave { get; private set; }
+    public int TotalKills { get; private set; }
+    public int MeleeKills { get; private set; }
+    public int RangedKills { get; private set; }
+    public int FlyingKills { get; private set; }
+    public int BossKills { get; private set; }
+
+    public int Score { get; private set; }
+    public int CurrentWave { get; private set; }
     public bool IsBossWave  => CurrentWave % 10 == 0 && CurrentWave > 0;
 
     [Header("References")]
@@ -50,6 +56,19 @@ public class GameManager : MonoBehaviour
         CurrentWave = 0;
         Score = 0;
         StartNextWave();
+    }
+
+    public void RegisterKill(EnemyType type)
+    {
+        TotalKills++;
+        switch (type)
+        {
+            case EnemyType.Melee: MeleeKills++; break;
+            case EnemyType.Ranged: RangedKills++; break;
+            case EnemyType.Flying: FlyingKills++; break;
+            case EnemyType.FlyingElite: FlyingKills++; break;
+            case EnemyType.Boss: BossKills++; break;
+        }
     }
 
     private void StartNextWave()
@@ -100,7 +119,7 @@ public class GameManager : MonoBehaviour
     {
         CurrentState = GameState.GameOver;
         Time.timeScale = 0f;
-        _uiManager.ShowGameOver(Score, CurrentWave);
+        _uiManager.ShowGameOver(Score, CurrentWave, TotalKills);
     }
 
     private void AddScore(int value)
@@ -114,5 +133,11 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f;
         EventManager.ClearAllEvents();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void MainMenu()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("MainMenu");
     }
 }

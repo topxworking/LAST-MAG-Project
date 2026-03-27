@@ -124,7 +124,11 @@ public class PlayerController : MonoBehaviour
 
     private void ApplyLook()
     {
-        float sens = _isAiming ? _aimSensitivity : _mouseSensitivity;
+        float sens = SettingsManager.Instance != null
+            ? (_isAiming ? SettingsManager.Instance.AimSensitivity
+            : SettingsManager.Instance.MouseSensitivity)
+    :       (_isAiming ? _aimSensitivity : _mouseSensitivity);
+
         _yaw += _lookInput.x * sens;
         _pitch -= _lookInput.y * sens;
         _pitch = Mathf.Clamp(_pitch, _pitchMin, _pitchMax);

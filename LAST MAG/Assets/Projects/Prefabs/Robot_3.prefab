@@ -147,7 +147,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 571748ea22cb92d41bf94212459bba64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyFlyingElite
-  _deathVFX: {fileID: 1194611721188141604, guid: 53b1848d00e994b4ca7ebdb54b278a90, type: 3}
+  _deathVFX: {fileID: 5586783540032275536, guid: 6e57a3cf9435eb14fb9928fa4ee60c63, type: 3}
   _hoverHeight: 6
   _hoverSpeed: 1.5
   _hoverAmplitude: 0.8

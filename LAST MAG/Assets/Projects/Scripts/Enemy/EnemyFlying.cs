@@ -87,6 +87,13 @@ public class EnemyFlying : EnemyBase
 
     public override void OnDeath()
     {
+        if (GameManager.instance != null && Stats != null)
+        {
+            GameManager.instance.RegisterKill(EnemyType.Flying);
+        }
+
+        base.OnDeath();
+
         EventManager.RaiseEnemyKilled(Stats.ScoreValue);
         WaveManager.instance?.RegisterEnemyKilled();
         Destroy(gameObject, 1.5f);

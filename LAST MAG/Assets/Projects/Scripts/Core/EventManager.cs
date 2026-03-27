@@ -3,7 +3,6 @@ using UnityEngine;
 
 public static class EventManager
 {
-    // Wave Events
     public static event Action<int> OnWaveStarted;
     public static event Action<int> OnWaveCompleted;
     public static event Action<int> OnBossWaveStarted;

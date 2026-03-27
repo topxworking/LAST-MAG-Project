@@ -187,7 +187,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5331c244044fe804b9d12c16bf2695ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BossEnemy
-  _deathVFX: {fileID: 1194611721188141604, guid: 53b1848d00e994b4ca7ebdb54b278a90, type: 3}
+  _deathVFX: {fileID: 5586783540032275536, guid: 6e57a3cf9435eb14fb9928fa4ee60c63, type: 3}
   _slamRadius: 5
   _slamDamage: 40
   _slamCooldown: 8

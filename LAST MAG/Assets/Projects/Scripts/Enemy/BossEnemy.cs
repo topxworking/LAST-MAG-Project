@@ -110,6 +110,13 @@ public class BossEnemy : EnemyBase
 
     public override void OnDeath()
     {
+        if (GameManager.instance != null && Stats != null)
+        {
+            GameManager.instance.RegisterKill(EnemyType.Boss);
+        }
+
+        base.OnDeath();
+
         EventManager.RaiseBossDefeated();
         EventManager.RaiseEnemyKilled(Stats.ScoreValue);
         WaveManager.instance?.RegisterEnemyKilled();

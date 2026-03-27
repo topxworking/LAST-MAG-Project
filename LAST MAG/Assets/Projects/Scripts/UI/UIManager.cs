@@ -32,6 +32,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _finalWaveText;
     [SerializeField] private TextMeshProUGUI _finalKillsText;
     [SerializeField] private Button _restartButton;
+    [SerializeField] private Button _mainMenuButton;
 
     private Coroutine _reloadBarCoroutine;
 
@@ -47,6 +48,7 @@ public class UIManager : MonoBehaviour
         if (_reloadRoot) _reloadRoot.SetActive(false);
 
         _restartButton.onClick.AddListener(() => GameManager.instance?.RestartGame());
+        _mainMenuButton.onClick.AddListener(() => GameManager.instance?.MainMenu());
     }
 
     private void OnEnable()
@@ -174,13 +176,12 @@ public class UIManager : MonoBehaviour
     public void ShowGameOver(int score, int wave, int kills)
     {
         _gameOverPanel.SetActive(true);
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
         _finalScoreText.text = $"{score:N0}".PadLeft(7, '0');
         _finalWaveText.text  = $"{wave:D2}";
-
-        if (_finalKillsText != null)
-        {
-            _finalKillsText.text = $"{kills:D2}";
-        }
+        _finalKillsText.text = $"{kills:D2}";
     }
 
     private void UpdateBossHealthBar(float current, float max)

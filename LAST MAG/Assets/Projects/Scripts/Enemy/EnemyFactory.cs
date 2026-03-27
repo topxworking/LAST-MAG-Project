@@ -5,9 +5,9 @@ public enum EnemyType { Melee, Ranged, Boss, Flying, FlyingElite }
 [System.Serializable]
 public struct EnemyPrefabEntry
 {
-    public EnemyType   Type;
-    public EnemyBase   Prefab;
-    public EnemyStats  BaseStats;
+    public EnemyType Type;
+    public EnemyBase Prefab;
+    public EnemyStats BaseStats;
 }
 
 public class EnemyFactory : MonoBehaviour

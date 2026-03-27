@@ -12,6 +12,8 @@ public class EnemyStats
     public float DetectRange  = 20f;
     public int   ScoreValue   = 10;
 
+    public EnemyType EnemyType;
+
     public void ScaleForWave(int waveNumber)
     {
         int scaleTier  = (waveNumber / 10);
