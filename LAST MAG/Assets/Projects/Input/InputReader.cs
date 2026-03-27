@@ -15,6 +15,7 @@ public class InputReader : ScriptableObject, GameInputActions.IPlayerActions
     public event Action OnAimStarted;
     public event Action OnAimCanceled;
     public event Action OnReloadStarted;
+    public event Action OnPauseStarted;
 
     private void OnEnable()
     {
@@ -63,6 +64,11 @@ public class InputReader : ScriptableObject, GameInputActions.IPlayerActions
     public void OnReload(InputAction.CallbackContext ctx)
     {
         if (ctx.started) OnReloadStarted?.Invoke();
+    }
+
+    public void OnPause(InputAction.CallbackContext ctx)
+    {
+        if (ctx.started) OnPauseStarted?.Invoke();
     }
 
     public void EnablePlayerInput()  => _actions?.Player.Enable();

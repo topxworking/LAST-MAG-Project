@@ -2,31 +2,65 @@ using UnityEngine;
 
 public class PauseManager : MonoBehaviour
 {
-    public static PauseManager Instance { get; private set; }
+    public static PauseManager instance { get; private set; }
     public bool IsPaused { get; private set; }
 
+    [Header("References")]
+    [SerializeField] private InputReader _inputReader;
     [SerializeField] private GameObject _pausePanel;
 
     private void Awake()
     {
-        if (Instance != null) { Destroy(gameObject); return; }
-        Instance = this;
+        if (instance != null) { Destroy(gameObject); return; }
+        instance = this;
+
+        Time.timeScale = 1f;
+        IsPaused = false;
+        if (_pausePanel != null) _pausePanel.SetActive(false);
     }
 
-    private void Update()
+    private void OnEnable()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
-            TogglePause();
+        if (_inputReader != null)
+        {
+            _inputReader.OnPauseStarted += TogglePause;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (_inputReader != null)
+        {
+            _inputReader.OnPauseStarted -= TogglePause;
+        }
     }
 
     public void TogglePause()
     {
+        if (GameManager.instance != null)
+        {
+            if (GameManager.instance.CurrentState == GameState.GameOver ||
+                GameManager.instance.CurrentState == GameState.Upgrading)
+                return;
+        }
+
         IsPaused = !IsPaused;
+
         Time.timeScale = IsPaused ? 0f : 1f;
         Cursor.lockState = IsPaused ? CursorLockMode.None : CursorLockMode.Locked;
         Cursor.visible = IsPaused;
-        _pausePanel.SetActive(IsPaused);
+
+        if (_pausePanel != null)
+            _pausePanel.SetActive(IsPaused);
+
+        if (IsPaused)
+            _inputReader.DisablePlayerInput();
+        else
+            _inputReader.EnablePlayerInput();
     }
 
-    public void Resume() => TogglePause();
+    public void Resume()
+    {
+        if (IsPaused) TogglePause();
+    }
 }

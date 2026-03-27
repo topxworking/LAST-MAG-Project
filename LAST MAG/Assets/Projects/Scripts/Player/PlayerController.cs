@@ -24,6 +24,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _normalFOV = 70f;
     [SerializeField] private float _aimFOVSpeed = 10f;
 
+    [Header("Audio")]
+    [SerializeField] private AudioSource _audioSource;
+    [SerializeField] private AudioClip[] _footstepSounds;
+    [SerializeField] private float _footstepDistance = 2.5f;
+
+    private float _distanceWalked;
+
     private CharacterController _cc;
     private PlayerStats _stats;
     private PlayerShooter _shooter;
@@ -99,11 +106,7 @@ public class PlayerController : MonoBehaviour
 
     private void CheckGround()
     {
-        _isGrounded = Physics.CheckSphere(
-            transform.position + Vector3.down * (_cc.height * 0.5f),
-            _groundCheckDist,
-            _groundLayer
-        );
+        _isGrounded = _cc.isGrounded;
 
         if (_isGrounded && _verticalVelocity < 0f)
             _verticalVelocity = -2f;
@@ -120,6 +123,28 @@ public class PlayerController : MonoBehaviour
         move.y = _verticalVelocity;
 
         _cc.Move(move * Time.deltaTime);
+
+        if (_isGrounded && _moveInput.magnitude > 0.1f)
+        {
+            _distanceWalked += (new Vector3(move.x, 0, move.z).magnitude) * Time.deltaTime;
+            if (_distanceWalked > _footstepDistance)
+            {
+                PlayFootstep();
+                _distanceWalked = 0;
+            }
+        }
+        else if (!_isGrounded)
+        {
+            Debug.Log("Player is NOT Grounded!");
+        }
+    }
+
+    private void PlayFootstep()
+    {
+        Debug.Log("Footstep Played!");
+        if (_footstepSounds.Length == 0) return;
+        int index = Random.Range(0, _footstepSounds.Length);
+        _audioSource.PlayOneShot(_footstepSounds[index], 0.4f);
     }
 
     private void ApplyLook()

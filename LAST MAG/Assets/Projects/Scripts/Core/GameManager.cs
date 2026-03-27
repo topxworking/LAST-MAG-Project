@@ -23,6 +23,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private WaveManager   _waveManager;
     [SerializeField] private UIManager     _uiManager;
     [SerializeField] private UpgradePanel  _upgradePanel;
+    [SerializeField] private InputReader _inputReader;
 
     private void Awake()
     {
@@ -131,6 +132,15 @@ public class GameManager : MonoBehaviour
     public void RestartGame()
     {
         Time.timeScale = 1f;
+
+        if (_inputReader != null)
+        {
+            _inputReader.EnablePlayerInput();
+        }
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
         EventManager.ClearAllEvents();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }

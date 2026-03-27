@@ -156,9 +156,12 @@ public class UIManager : MonoBehaviour
 
     private void HandleBossWave(int wave)
     {
-        _bossBarRoot.SetActive(true);
-        if (_bossNameText) _bossNameText.text = $"BOSS — WAVE {wave}";
-        if (_bossHealthBar) _bossHealthBar.value = 1f;
+        if (_bossBarRoot != null)
+        {
+            _bossBarRoot.SetActive(true);
+            if (_bossNameText) _bossNameText.text = $"BOSS — WAVE {wave}";
+            if (_bossHealthBar) _bossHealthBar.value = 1f;
+        }
     }
 
     private void HideBossBar() => _bossBarRoot.SetActive(false);
@@ -180,7 +183,7 @@ public class UIManager : MonoBehaviour
         Cursor.visible = true;
 
         _finalScoreText.text = $"{score:N0}".PadLeft(7, '0');
-        _finalWaveText.text  = $"{wave:D2}";
+        _finalWaveText.text  = $"WAVE {wave:D2}";
         _finalKillsText.text = $"{kills:D2}";
     }
 
@@ -194,6 +197,8 @@ public class UIManager : MonoBehaviour
     {
         if (_countdownRoot) _countdownRoot.SetActive(true);
         if (_countdownText) _countdownText.text = sec.ToString();
+
+        FinishReloadBar();
     }
 
     private void HideCountdown()

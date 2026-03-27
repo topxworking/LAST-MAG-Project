@@ -8,6 +8,10 @@ public class EnemyFlying : EnemyBase
     [SerializeField] private float _hoverAmplitude = 0.5f;
     [SerializeField] private Transform _muzzle;
 
+    [Header("Audio")]
+    [SerializeField] protected AudioSource _audioSource;
+    [SerializeField] private AudioClip _fireSound;
+
     private float _hoverTimer;
     private float _baseY;
 
@@ -43,11 +47,19 @@ public class EnemyFlying : EnemyBase
         float stopRange = Stats.DetectRange * 0.5f;
         if (DistanceToPlayerPublic > stopRange)
         {
-            transform.position = Vector3.MoveTowards(
+            Vector3 nextPos = Vector3.MoveTowards(
                 transform.position,
                 targetPos,
                 Stats.MoveSpeed * Time.deltaTime
             );
+
+            Vector3 moveDir = (nextPos - transform.position).normalized;
+            float moveDist = Vector3.Distance(transform.position, nextPos);
+
+            if (!Physics.Raycast(transform.position, moveDir, moveDist + 0.5f, LayerMask.GetMask("Ground")))
+            {
+                transform.position = nextPos;
+            }
         }
 
         if (toPlayer != Vector3.zero)
@@ -73,7 +85,25 @@ public class EnemyFlying : EnemyBase
 
     private void PerformRangedAttack()
     {
+        if (PlayerTransform == null) return;
+
+        Vector3 eyePos = transform.position + Vector3.up * 0.5f;
+        Vector3 dirToPlayer = (PlayerTransform.position + Vector3.up * 0.5f) - eyePos;
+
+        if (Physics.Raycast(eyePos, dirToPlayer, out RaycastHit hit, Stats.DetectRange))
+        {
+            if (!hit.collider.CompareTag("Player"))
+            {
+                return;
+            }
+        }
+
         if (PoolManager.instance == null) return;
+
+        if (_fireSound != null)
+        {
+            _audioSource.PlayOneShot(_fireSound);
+        }
 
         Transform firePoint = _muzzle != null ? _muzzle : transform;
 
@@ -87,15 +117,6 @@ public class EnemyFlying : EnemyBase
 
     public override void OnDeath()
     {
-        if (GameManager.instance != null && Stats != null)
-        {
-            GameManager.instance.RegisterKill(EnemyType.Flying);
-        }
-
         base.OnDeath();
-
-        EventManager.RaiseEnemyKilled(Stats.ScoreValue);
-        WaveManager.instance?.RegisterEnemyKilled();
-        Destroy(gameObject, 1.5f);
     }
 }

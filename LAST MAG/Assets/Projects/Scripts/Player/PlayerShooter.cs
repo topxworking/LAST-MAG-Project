@@ -30,6 +30,12 @@ public class PlayerShooter : MonoBehaviour
     [Header("Crosshair")]
     [SerializeField] private CrosshairController _crosshair;
 
+    [Header("Audio")]
+    [SerializeField] private AudioSource _sfxSource;
+    [SerializeField] private AudioClip _shootSound;
+    [SerializeField] private AudioClip _reloadSound;
+    [SerializeField] private float _originalReloadSoundDuration = 2.0f;
+
     private PlayerController _controller;
 
     private PlayerHealth _health;
@@ -81,9 +87,7 @@ public class PlayerShooter : MonoBehaviour
 
         if (_recoilPitchTarget > 0f)
         {
-            float recover = Time.deltaTime * _recoilRecovery;
-            _controller?.AddRecoil(-recover, 0f);
-            _recoilPitchTarget = Mathf.Max(0f, _recoilPitchTarget - recover);
+            _recoilPitchTarget = Mathf.Max(0f, _recoilPitchTarget - (Time.deltaTime * _recoilRecovery));
         }
 
         if (!_isShooting) _shotCount = Mathf.Max(0, _shotCount - 1);
@@ -96,7 +100,8 @@ public class PlayerShooter : MonoBehaviour
 
     public void RequestReload()
     {
-        if (_isReloading || _stats.CurrentAmmo == _stats.MagazineSize) return;
+        if (_isReloading || _stats.CurrentAmmo == _stats.MagazineSize || _countdownLock) return;
+
         StartCoroutine(ReloadRoutine());
     }
 
@@ -105,7 +110,10 @@ public class PlayerShooter : MonoBehaviour
         if (_stats.CurrentAmmo <= 0)
         {
             _isShooting = false;
-            StartCoroutine(ReloadRoutine());
+
+            if (!_countdownLock)
+                StartCoroutine(ReloadRoutine());
+
             return;
         }
 
@@ -142,6 +150,7 @@ public class PlayerShooter : MonoBehaviour
 
         StartCoroutine(SpawnTracer(_muzzle.position, hitPoint));
 
+        _sfxSource.PlayOneShot(_shootSound);
         ApplyRecoil();
         _shotCount++;
     }
@@ -201,7 +210,17 @@ public class PlayerShooter : MonoBehaviour
         _shotCount = 0;
 
         EventManager.RaiseReloadStarted(_stats.ReloadTime);
+
+        if (_sfxSource != null && _reloadSound != null)
+        {
+            float targetPitch = _originalReloadSoundDuration / _stats.ReloadTime;
+            _sfxSource.pitch = targetPitch;
+            _sfxSource.PlayOneShot(_reloadSound);
+        }
+
         yield return new WaitForSeconds(_stats.ReloadTime);
+      
+        if (_sfxSource != null) _sfxSource.pitch = 1f;
 
         _stats.CurrentAmmo = _stats.MagazineSize;
         _isReloading = false;
@@ -214,9 +233,16 @@ public class PlayerShooter : MonoBehaviour
     {
         _isShooting = false;
         _isReloading = false;
+        _countdownLock = true;
         _shotCount = 0;
         _nextFireTime = float.MaxValue;
         StopAllCoroutines();
+
+        if (_sfxSource != null)
+        {
+            _sfxSource.pitch = 1f;
+            _sfxSource.Stop();
+        }
     }
 
     private void HandleMenuClose()
@@ -234,6 +260,11 @@ public class PlayerShooter : MonoBehaviour
         StopAllCoroutines();
     }
 
-    private void OnCountdownTick(int sec) => _countdownLock = true;
+    private void OnCountdownTick(int sec)
+    {
+        _isShooting = false;
+        _countdownLock = true;
+    }
+
     private void OnCountdownDone() => _countdownLock = false;
 }

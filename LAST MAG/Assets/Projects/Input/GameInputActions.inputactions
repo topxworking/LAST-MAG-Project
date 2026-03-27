@@ -28,7 +28,7 @@
                     "name": "Jump",
                     "type": "Button",
                     "id": "11111111-0000-0000-0000-000000000003",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -55,6 +55,15 @@
                     "name": "Reload",
                     "type": "Button",
                     "id": "44ebe625-e74c-40ac-a600-57c6e6a23cd0",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Pause",
+                    "type": "Button",
+                    "id": "6814f293-1d7f-4aa2-bbaa-0df2df3b9ed7",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -169,6 +178,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Reload",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9247db71-3330-4e77-bbda-e0e809287414",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Pause",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

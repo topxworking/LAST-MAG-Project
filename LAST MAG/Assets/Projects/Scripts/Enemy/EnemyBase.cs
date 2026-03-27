@@ -197,18 +197,18 @@ public abstract class EnemyBase : MonoBehaviour
     public virtual void TakeDamage(float amount)
     {
         if (_isDead) return;
+
         _currentHealth -= amount;
         OnHit(amount);
-
-        if (!_isDead)
-        {
-            TransitionTo(ChaseState);
-        }
 
         if (_currentHealth <= 0f)
         {
             _isDead = true;
             TransitionTo(DeadState);
+        }
+        else
+        {
+            TransitionTo(ChaseState);
         }
     }
 
@@ -237,7 +237,8 @@ public abstract class EnemyBase : MonoBehaviour
         }
 
         EventManager.RaiseEnemyKilled(Stats.ScoreValue);
-        WaveManager.instance?.RegisterEnemyKilled();
-        Destroy(gameObject, 1.5f);
+        WaveManager.instance.RegisterEnemyKilled();
+
+        Destroy(gameObject, 0.1f);
     }
 }
