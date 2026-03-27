@@ -66,7 +66,6 @@ public class PlayerController : MonoBehaviour
     {
         _input.OnMove += HandleMove;
         _input.OnLook += HandleLook;
-        _input.OnJumpStarted += HandleJump;
         _input.OnShootStarted += HandleShootStart;
         _input.OnShootCanceled += HandleShootStop;
         _input.OnAimStarted += HandleAimStart;
@@ -82,7 +81,6 @@ public class PlayerController : MonoBehaviour
     {
         _input.OnMove -= HandleMove;
         _input.OnLook -= HandleLook;
-        _input.OnJumpStarted -= HandleJump;
         _input.OnShootStarted -= HandleShootStart;
         _input.OnShootCanceled -= HandleShootStop;
         _input.OnAimStarted -= HandleAimStart;
